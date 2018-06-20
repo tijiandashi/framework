@@ -1,0 +1,17 @@
+{
+    "name": "tijiandashi/framework",
+    "description": "php framework",
+    "version": "1.0.0",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0.0",
+        "nervetattoo/elasticsearch" : ">=2.0",
+        "qiniu/php-sdk": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dai\\Framework\\": "src/"
+        }
+    }
+}
