@@ -74,7 +74,6 @@ class Service
             $config =  $this->getConfig();
             $routerConfigs =  explode(",", $config->router->list);
             foreach ($routerConfigs as $module) {
-                echo $module."<br>";
                 $router->addResource(ucfirst($module), '/'.lcfirst($module));
             }
             return $router;
