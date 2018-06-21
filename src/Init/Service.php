@@ -88,7 +88,7 @@ class Service
             foreach ($plugins as $plugin) {
                 $pluginArr = explode("_", $plugin);
                 if( count($pluginArr) == 2 && $pluginArr[0] == "SYS") {
-                    $pluginName = "\\Dai\\Lib\\Framework\\Plugin\\".$pluginArr[1];
+                    $pluginName = "\\Dai\\Framework\\Plugin\\".$pluginArr[1];
                 }else {
                     $pluginName = "\\".PRJ_NS."\\Plugin\\".$plugin;
                 }
