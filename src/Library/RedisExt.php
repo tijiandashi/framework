@@ -22,7 +22,7 @@ class RedisExt
     private static function init(){
         //未被实例化
         if( !isset(self::$_client) ){
-            self::$_client = new Redis();
+            self::$_client = new \Redis();
             try {
                 self::$_client->connect(self::$config->ip, self::$config->port);
             }catch(\Exception $e){
