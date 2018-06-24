@@ -112,7 +112,8 @@ class Service
                 'username' => $configDb->username,
                 'password' => $configDb->password,
                 'dbname'   => $configDb->dbname,
-                'charset'  => $configDb->charset
+                'charset'  => $configDb->charset,
+                'port' => isset($configDb->port) ? $configDb->port : 3306,
             ];
             return new $class($params);
         });
