@@ -26,7 +26,6 @@ class AnnotationsPlugin extends Plugin
         $basePageInfo->runMode =  Runmode::get();
         $basePageInfo->module = str_replace("Controller", "", $dispatcher->getControllerClass());
         $basePageInfo->method = str_replace("Action", "", $dispatcher->getActiveMethod());
-
         // 解析目前访问的控制的方法的注释
         $annotations = $this->annotations->getMethod( $dispatcher->getControllerClass(), $dispatcher->getActiveMethod() );
 
@@ -40,6 +39,10 @@ class AnnotationsPlugin extends Plugin
         }
         if( $this->getAnnotationValue($annotations, "Login") === false ){
             $basePageInfo->login = false;
+        }
+
+        if( trim($this->getAnnotationValue($annotations, "Action")) != ""  ){
+            $basePageInfo->method = trim($this->getAnnotationValue($annotations, "Action"));
         }
     }
 

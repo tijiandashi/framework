@@ -7,6 +7,7 @@
  */
 namespace Dai\Framework\Init;
 
+use Dai\Framework\Library\ConfigLibrary;
 use Dai\Framework\Library\Runmode;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Php as PhpEngine;
@@ -24,30 +25,24 @@ class Service
         $runMode = Runmode::get();
 
         /**
-         * Shared configuration service
-         */
-        $di->setShared('config', function () use ($runMode) {
-            return new \Phalcon\Config\Adapter\Ini(APP_PATH ."/config/". $runMode. "/config.ini");
-        });
-
-        /**
          * Setting up the view component
          */
         $di->setShared('view', function () {
-            $config = $this->getConfig();
+            $configApplication = ConfigLibrary::get("config", "application");
 
             $view = new View();
             $view->setDI($this);
-            $view->setViewsDir(BASE_PATH.$config->application->viewsDir);
+            $view->setViewsDir(BASE_PATH.$configApplication->viewsDir);
 
             $view->registerEngines([
-                '.volt' => function ($view) {
-                    $config = $this->getConfig();
-
+                '.volt' => function ($view) use ($configApplication) {
+                    $cachePath =  BASE_PATH.$configApplication->cacheDir;
+                    if( !is_dir($cachePath)) {
+                        mkdir($cachePath);
+                    }
                     $volt = new VoltEngine($view, $this);
-
                     $volt->setOptions([
-                        'compiledPath' => BASE_PATH.$config->application->cacheDir,
+                        'compiledPath' => $cachePath,
                         'compiledSeparator' => '_'
                     ]);
                     return $volt;
@@ -68,11 +63,15 @@ class Service
             return $session;
         });
 
+        $di->set('cookies', function () {
+            $cookies = new \Phalcon\Http\Response\Cookies();
+            $cookies->useEncryption(false); //默认使用加密方式，但这里我们刚开始使用非加密方式
+            return $cookies;
+        });
 
         $di->setShared('router', function () use ($di) {
             $router = new RouterAnnotations(false);
-            $config =  $this->getConfig();
-            $routerConfigs =  explode(",", $config->router->list);
+            $routerConfigs =  explode(",", ConfigLibrary::get("config", "router", "list"));
             foreach ($routerConfigs as $module) {
                 $router->addResource(ucfirst($module), '/'.lcfirst($module));
             }
@@ -83,8 +82,7 @@ class Service
         $di->setShared( 'dispatcher', function () use ($di){
             $eventsManager = new EventsManager();
             // 添加插件到dispatch事件中
-            $config = $this->getConfig();
-            $plugins = explode(",", $config->plugin->list);
+            $plugins = explode(",", ConfigLibrary::get("config", "plugin", "list"));
             foreach ($plugins as $plugin) {
                 $pluginArr = explode("_", $plugin);
                 if( count($pluginArr) == 2 && $pluginArr[0] == "SYS") {
@@ -107,14 +105,14 @@ class Service
          * Database connection is created based in the parameters defined in the configuration file
          */
         $di->setShared('db', function () use ($di) {
-            $config = $this->getConfig();
-            $class = 'Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
+            $configDb = ConfigLibrary::get("config", "database");
+            $class = 'Phalcon\Db\Adapter\Pdo\\' . $configDb->adapter;
             $params = [
-                'host'     => $config->database->host,
-                'username' => $config->database->username,
-                'password' => $config->database->password,
-                'dbname'   => $config->database->dbname,
-                'charset'  => $config->database->charset
+                'host'     => $configDb->host,
+                'username' => $configDb->username,
+                'password' => $configDb->password,
+                'dbname'   => $configDb->dbname,
+                'charset'  => $configDb->charset
             ];
             return new $class($params);
         });

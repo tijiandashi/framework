@@ -11,56 +11,34 @@ namespace Dai\Framework\Library;
 
 class RedisExt
 {
-    private static $config;
-    private static $_client = Null;
+    private static $_clients = null;
 
-    public function __construct(\Phalcon\Config $config)
-    {
-        self::$config = $config;
-    }
+    private function __construct(){}
 
-    private static function init(){
+    /**
+     * @param null $config
+     * @return \Redis
+     * @throws \Exception
+     */
+    public static function getInstance($config = null){
+        if( $config == null || $config->ip == null || $config->port == null ) {
+            $config = ConfigLibrary::get("config", "redis");
+        }
+        $clientKey = $config->ip."_".$config->port;
+
         //未被实例化
-        if( !isset(self::$_client) ){
-            self::$_client = new \Redis();
+        if( !isset(self::$_clients[$clientKey]) ){
             try {
-                self::$_client->connect(self::$config->ip, self::$config->port);
+                $redisIns = new \Redis();
+                $redisIns->connect($config->ip, $config->port);
+                self::$_clients[$clientKey] = $redisIns;
+                return $redisIns;
             }catch(\Exception $e){
+                Log::error("连接redis失败, msg ". $e->getMessage().", code ". $e->getCode());
                 throw new \Exception($e->getMessage(),$e->getCode());
-                return false;
             }
-        }
-    }
-
-    public static function getRedis(){
-        $ret = self::init();
-        if($ret === false){
-            return false;
-        }
-        return self::$_client;
-    }
-
-    public static function set($key, $value, $expire_time = 0){
-        $redis_ins = self::getRedis();
-        if( $redis_ins == NULL || $redis_ins === false) {
-            return false;
-        }
-        if( $expire_time > 0){
-            $ret = $redis_ins->setex($key, $expire_time, $value);
         }else {
-            $ret = $redis_ins->set($key, $value);
+            return self::$_clients[$clientKey];
         }
-        if($ret === false){
-            return false;
-        }
-        return true;
-    }
-
-    public static function get($key){
-        $redis_ins = self::getRedis();
-        if( $redis_ins == NULL || $redis_ins === false) {
-            return false;
-        }
-        return $redis_ins->get($key);
     }
 }

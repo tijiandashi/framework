@@ -17,8 +17,8 @@ class Loader
          */
         $loader->registerDirs(
             [
-                BASE_PATH.$config->application->controllersDir,
-                BASE_PATH.$config->application->modelsDir
+                BASE_PATH.$config->controllersDir,
+                BASE_PATH.$config->modelsDir
             ]
         )->register();
     }

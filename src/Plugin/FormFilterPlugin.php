@@ -9,6 +9,7 @@
 namespace Dai\Framework\Plugin;
 
 
+use Dai\Framework\Library\Log;
 use Dai\Framework\Library\Trace;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Dispatcher;
@@ -33,6 +34,7 @@ class FormFilterPlugin extends Plugin
 
         //如果不需要校验
         if( $className === false){
+            ($basePageInfo);
             return true;
         }
 
@@ -40,13 +42,14 @@ class FormFilterPlugin extends Plugin
         if( $className == "" ){
             $module = str_replace( "Controller", "", $basePageInfo->module ) ;
             $action = ucfirst( str_replace( "Action", "", $basePageInfo->method ) );
-            $className = "\\". PRG_NS ."\\Models\\$module\\Param\\$action"."Param";
+            $className = "\\". PRJ_NS ."\\Models\\$module\\Param\\$action"."Param";
         }
 
         if( ! class_exists( $className) ) {
+            Log::error("className $className not exit");
             return true;
         }
-
+        
         /** @var \Dai\Framework\Base\BaseParam $classIns */
         $classIns = new $className();
         $classIns->vaild($classIns, $di, $basePageInfo);

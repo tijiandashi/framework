@@ -8,6 +8,7 @@
 namespace Dai\Framework\Base;
 
 use Dai\Framework\Library\ConfigLibrary;
+use Dai\Framework\Library\Trace;
 
 class BaseDao extends \Phalcon\Mvc\Model
 {
@@ -260,13 +261,13 @@ class BaseDao extends \Phalcon\Mvc\Model
     {
         $classDaoName = get_called_class();
         $reflectionDao = new \ReflectionClass ( $classDaoName );
+
+
         $commentDao = $reflectionDao->getDocComment();
         $className = \Dai\Framework\Library\Annotations::getCommentValue($commentDao, "dataObject");
 
         $object = new $className();
         $reflection = new \ReflectionClass ( $className );
-
-
         foreach ( $reflection->getProperties() as $property) {
             $propertyName = $property->name;
             if( ! isset($data[$propertyName]) ) {

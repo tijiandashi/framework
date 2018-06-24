@@ -48,7 +48,7 @@ class ConfigLibrary
         }
         try{
             $iniReader = new \Phalcon\Config\Adapter\Ini($configFile);
-            if( $iniReader == null || $iniReader->$module == null) {
+            if( $iniReader == null || !isset($iniReader->$module)) {
                 return null;
             }else {
                 return $iniReader->$module;
@@ -67,11 +67,13 @@ class ConfigLibrary
      */
     public static function geFromConfigFileByKey(string $configFile, string $module, string $key){
         if( !file_exists($configFile)) {
+            Log::error("file $configFile not exist");
             return null;
         }
+
         try{
             $iniReader = new \Phalcon\Config\Adapter\Ini($configFile);
-            if( $iniReader == null || $iniReader->$module == null) {
+            if( $iniReader == null || !isset($iniReader->$module) || !isset($iniReader->$module->$key) ) {
                 return null;
             }else {
                 return $iniReader->$module->$key;

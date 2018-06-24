@@ -8,6 +8,8 @@
 
 namespace Dai\Framework\Base;
 
+use Dai\Framework\Library\Annotations;
+
 class BaseParam
 {
     /**
@@ -27,14 +29,18 @@ class BaseParam
             $comment = $reflectionProperty->getDocComment();
             $defaultValue = $reflectionProperty->getValue($classIns);
 
-            $name = \Dai\Framework\Plugin\AnnotationsPlugin::getCommentValue($comment, 'name' );
+            $name = Annotations::getCommentValue($comment, 'name' );
             $name = $name == "" ? $propertyName : $name;
             $value =  ($basePageInfo->requestType == "post") ? $request->getPost($name) : $request->getQuery($name);
 
-            $type = \Dai\Framework\Plugin\AnnotationsPlugin::getCommentValue($comment, 'type' );
-            $length = \Dai\Framework\Plugin\AnnotationsPlugin::getCommentValue($comment, 'length' );
-            $regex = \Dai\Framework\Plugin\AnnotationsPlugin::getCommentValue($comment, 'regex' );
-            $optional = \Dai\Framework\Plugin\AnnotationsPlugin::getCommentValue($comment, 'optional' );
+            $type = Annotations::getCommentValue($comment, 'type' );
+            $length = Annotations::getCommentValue($comment, 'length' );
+            $regex = Annotations::getCommentValue($comment, 'regex' );
+            $optional = Annotations::getCommentValue($comment, 'optional' );
+
+            if( $optional == "" && $length == "" && $regex == "") {
+                $optional = ($length == "" && $regex == "") ? true : false;
+            }
             $value = $this->getRequestParam($name, $value, $defaultValue, $type, $length, $regex, $optional);
             $classIns->$propertyName = $value;
         }

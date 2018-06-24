@@ -14,6 +14,6 @@ class BaseSessionInfo
     public $uid;
     public $userName;
     public $nickName;
-    public $phone;
+    public $mobile;
     public $adminLevel;
 }
