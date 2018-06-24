@@ -40,7 +40,7 @@ class RedisExt
         return self::$_client;
     }
 
-    public function set($key, $value, $expire_time = 0){
+    public static function set($key, $value, $expire_time = 0){
         $redis_ins = self::getRedis();
         if( $redis_ins == NULL || $redis_ins === false) {
             return false;
@@ -56,7 +56,7 @@ class RedisExt
         return true;
     }
 
-    public function get($key){
+    public static function get($key){
         $redis_ins = self::getRedis();
         if( $redis_ins == NULL || $redis_ins === false) {
             return false;
