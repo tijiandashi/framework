@@ -7,6 +7,8 @@
  */
 namespace Dai\Framework\Base;
 
+use Dai\Framework\Library\ConfigLibrary;
+
 class BaseDao extends \Phalcon\Mvc\Model
 {
     /**
@@ -24,9 +26,8 @@ class BaseDao extends \Phalcon\Mvc\Model
         $file = APP_PATH."/config/sqlmap/".$dirArr[0]."/". $dirArr[1].".ini";
 
         try{
-            $iniReader = new \Phalcon\Config\Adapter\Ini($file);
-            $sql = $iniReader[ $dirArr[2] ]->sql;
-            $table = $iniReader->table->name;
+            $sql = ConfigLibrary::geFromConfigFileByKey($file, $dirArr[2], "sql");
+            $table = ConfigLibrary::geFromConfigFileByKey($file, "table", "name");
             $sql = str_replace("%table", $table, $sql);
             if( is_array($param) && isset($param['select']) ){
                 $sql = str_replace("%SELECT", $param['select'], $sql);
