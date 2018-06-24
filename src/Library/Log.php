@@ -42,13 +42,13 @@ class Log
 
         if( ! isset( self::$_instances[$module] ) ) {
             $logConfig = ConfigLibrary::get("config", "log");
-            $filePath = self::getConfig($logConfig,"filePath", "./log");
+            $filePath = APP_PATH.self::getConfig($logConfig,"filePath", "/log");
             $level = self::getConfig($logConfig,"level", 4);
             $format = self::getConfig($logConfig,"format", "[%date%][%type%] %message%");
             if( ! is_dir($filePath)) {
                 mkdir($filePath);
             }
-            self::$_instances[$module] = new \Phalcon\Logger\Adapter\File(BASE_PATH.$filePath."/$module.log");
+            self::$_instances[$module] = new \Phalcon\Logger\Adapter\File($filePath."/$module.log");
             self::$_instances[$module]->setLogLevel($level);
             $formatter = new \Phalcon\Logger\Formatter\Line($format, 'Y-m-d H:i:s');
             self::$_instances[$module]->setFormatter( $formatter );
