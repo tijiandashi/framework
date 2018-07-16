@@ -36,9 +36,13 @@ class Log
     {
         $di = \Phalcon\DI::getDefault();
 
-        /** @var \Dai\Framework\Base\BasePageInfo $basePageInfo */
-        $basePageInfo = $di->get('basePageInfo');
-        $module = lcfirst($basePageInfo->module);
+        if( $di != null) {
+            /** @var \Dai\Framework\Base\BasePageInfo $basePageInfo */
+            $basePageInfo = $di->get('basePageInfo');
+            $module = lcfirst($basePageInfo->module);
+        }else {
+            $module = "default";
+        }
 
         if( ! isset( self::$_instances[$module] ) ) {
             $logConfig = ConfigLibrary::get("config", "log");
