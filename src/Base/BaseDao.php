@@ -60,7 +60,7 @@ class BaseDao extends \Phalcon\Mvc\Model
         $insertKeyPre = [];
         $insertData = [];
         foreach($data as $key => $value){
-            if( $value != null){
+            if( $value !== null){
                 $insertKey[] = $key;
                 $insertKeyPre[] = ":".$key;
                 $insertData[":".$key] = $value;
@@ -86,7 +86,7 @@ class BaseDao extends \Phalcon\Mvc\Model
         $updateKeys = [];
         $updateValues = [];
         foreach($data as $key => $value){
-            if( $value != null){
+            if( $value !== null){
                 $updateKeys[] = $key ." =  $".$key;
                 $updateValues[$key] = $value;
             }
