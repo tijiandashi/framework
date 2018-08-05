@@ -8,6 +8,7 @@
 namespace Dai\Framework\Base;
 
 use Dai\Framework\Library\ConfigLibrary;
+use Dai\Framework\Library\Log;
 use Dai\Framework\Library\Trace;
 
 class BaseDao extends \Phalcon\Mvc\Model
@@ -28,6 +29,10 @@ class BaseDao extends \Phalcon\Mvc\Model
 
         try{
             $sql = ConfigLibrary::geFromConfigFileByKey($file, $dirArr[2], "sql");
+            if( trim($sql) == "") {
+                Log::error("sql find error, [$sid] not valid");
+                throw new BaseException(BaseException::PARAM_ERROR);
+            }
             $table = ConfigLibrary::geFromConfigFileByKey($file, "table", "name");
             $sql = str_replace("%table", $table, $sql);
             if( is_array($param) && isset($param['select']) ){
