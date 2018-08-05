@@ -82,16 +82,16 @@ class BaseDao extends \Phalcon\Mvc\Model
      */
     public function editBase($sql, $data)
     {
-        $data = json_decode(json_encode($data), true);
         $updateKeys = [];
         $updateValues = [];
-        foreach($data as $key => $value){
+        foreach($data['update'] as $key => $value){
             if( $value !== null){
-                $updateKeys[] = $key ." =  $".$key;
-                $updateValues[$key] = $value;
+                $updateKeys[] = $key ." =  :".$key;
+                $updateValues[":".$key] = $value;
             }
         }
-        $sql = str_replace("%UPDATE", implode(",", $updateKeys), $sql);
+        $sql = str_replace("%UPDATE",  implode(",", $updateKeys), $sql);
+        $sql = str_replace("%WHERE", " WHERE ". $data['where'], $sql);
         return $this->execSql($this->pdo, $sql, $updateValues);
     }
 
@@ -114,7 +114,7 @@ class BaseDao extends \Phalcon\Mvc\Model
     {
         $selectData = [];
         foreach ($data as $key => $item) {
-            if( $item != null){
+            if( $item !== null){
                 $selectData["$key"] = $item;
             }
         }
@@ -152,9 +152,11 @@ class BaseDao extends \Phalcon\Mvc\Model
         }
 
         try{
+            $orderBy = isset($binds['orderBy']) ? trim($binds['orderBy']) : "";
+            $sqlPre = str_replace("%ORDERBY", $orderBy, $sqlPre );
             $stmt = $pdo->prepare( $sqlPre );
             $res = $stmt ->execute( $binds);
-            if($res != false){
+            if($res !== false){
                 $stmt->setFetchMode(\Phalcon\DB::FETCH_ASSOC);
                 $res =  $stmt->fetchAll();
             }

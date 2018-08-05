@@ -47,6 +47,7 @@ class BaseController extends \Phalcon\Mvc\Controller
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             exit;
         } else {
+            $response = json_decode(json_encode($response), true);
             $this->view->render(lcfirst($module), lcfirst($method), $response);
         }
     }
