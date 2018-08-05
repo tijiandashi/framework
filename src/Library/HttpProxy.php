@@ -12,7 +12,7 @@ namespace Dai\Framework\Library;
 class HttpProxy
 {
     //参数1：访问的URL，参数2：post数据(不填则为GET)，参数3：提交的$cookies,参数4：是否返回$cookies
-    public static function call($url, $post = null, $headers =null, $timeout = 10, $refer=null, $cookie = null)
+    public function call($url, $post = null, $headers =null, $timeout = 10, $refer=null, $cookie = null, $withCookie = null)
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -34,6 +34,10 @@ class HttpProxy
         }
         if($refer) {
             curl_setopt($curl, CURLOPT_REFERER, $refer);
+        }
+
+        if( trim($withCookie) != "") {
+            curl_setopt($curl, CURLOPT_COOKIEJAR, $withCookie);//用来存放登录成功的cookie
         }
 
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
