@@ -36,12 +36,16 @@ class Log
     {
         $di = \Phalcon\DI::getDefault();
 
-        if( $di != null) {
-            /** @var \Dai\Framework\Base\BasePageInfo $basePageInfo */
-            $basePageInfo = $di->get('basePageInfo');
-            $module = lcfirst($basePageInfo->module);
-        }else {
-            $module = "default";
+        $module = "default";
+        try{
+            if( $di != null) {
+                /** @var \Dai\Framework\Base\BasePageInfo $basePageInfo */
+                $basePageInfo = $di->get('basePageInfo');
+                if ($basePageInfo !== null) {
+                    $module = lcfirst($basePageInfo->module);
+                }
+            }
+        }catch (\Exception $e) {
         }
 
         if( ! isset( self::$_instances[$module] ) ) {
