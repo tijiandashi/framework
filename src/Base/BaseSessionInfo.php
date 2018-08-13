@@ -16,4 +16,5 @@ class BaseSessionInfo
     public $nickName;
     public $mobile;
     public $adminLevel;
+    public $inviteCode;
 }

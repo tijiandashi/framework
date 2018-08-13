@@ -47,6 +47,12 @@ class BaseDao extends \Phalcon\Mvc\Model
         try{
             $this->pdo = $this->getDI()->getShared('db');
             $function = $functionPre[0]."Base";
+            if(is_array($param) && isset($param['where']) && trim($param['where']) != "") {
+                $sql = str_replace("%WHERE", " WHERE ". $param['where'], $sql);
+            }else {
+                $sql = str_replace("%WHERE", "", $sql);
+            }
+
             return $this->$function($sql, $param);
         }catch (\Exception $e){
             throw new BaseException(BaseException::INTER_ERROR, $e->getMessage());
@@ -117,6 +123,14 @@ class BaseDao extends \Phalcon\Mvc\Model
      */
     public function selectBase($sql, $data)
     {
+
+        if( isset($data['orderBy']) ) {
+            $sql = str_replace("%ORDERBY", " ORDER BY  ". $data['orderBy'], $sql);
+        }else {
+            $sql = str_replace("%ORDERBY", "", $sql);
+        }
+
+
         $selectData = [];
         foreach ($data as $key => $item) {
             if( $item !== null){
