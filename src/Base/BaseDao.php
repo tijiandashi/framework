@@ -40,6 +40,7 @@ class BaseDao extends \Phalcon\Mvc\Model
                 unset($param['select']);
             }
         }catch (\Exception $e){
+            Log::error("exec sql fail, $sid, $param, exp " . $e->getMessage());
             throw new BaseException(BaseException::INTER_ERROR, $e->getMessage());
         }
 
@@ -55,6 +56,7 @@ class BaseDao extends \Phalcon\Mvc\Model
 
             return $this->$function($sql, $param);
         }catch (\Exception $e){
+            Log::error("exec sql [$sql] fail, $sid, $param, exp " . $e->getMessage());
             throw new BaseException(BaseException::INTER_ERROR, $e->getMessage());
         }
     }
