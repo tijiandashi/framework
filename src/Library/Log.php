@@ -75,7 +75,9 @@ class Log
 
     public static function writeLog($logType, $str)
     {
+        $trace = debug_backtrace();
         $instance = self::getInstance();
+        $str = " [".$trace[1]['file'].":".$trace[1]['line']."] $str";
         return $instance->$logType($str);
     }
 
