@@ -12,7 +12,6 @@ class CacheClass{
 
     public static function cacheDataByRedis($method, $tag, \Closure $func, $timeCache = 300){
 
-        $redis = (\Phalcon\DI::getDefault())->get('redis');
         if(empty($method) || empty($tag)){
             return $func();
         }
@@ -23,7 +22,7 @@ class CacheClass{
         $timeCache = intval($timeCache) > 0 ? $timeCache : 0;
         $rKey = "BGCache:" . $method . ":" . $tag;
         if($timeCache > 0){
-            $json_str = $redis->get($rKey);
+            $json_str = RedisExt::getInstance()->get($rKey);
             $json = !empty($json_str) ? json_decode($json_str, true) : [];
             $json['_update_'] = isset($json['_update_']) ? $json['_update_'] : 0;
             $data = isset($json['data']) ? $json['data'] : [];
@@ -33,7 +32,7 @@ class CacheClass{
         if($timeCache == 0 || !isset($json['data']) || $now - $json['_update_'] > $timeCache){
             $data = $func();
             $timeCache = $timeCache <= 0 ? 300 : $timeCache;
-            $redis->set($rKey, json_encode(['data' => $data, '_update_' => $now]), $timeCache);
+            RedisExt::getInstance()->set($rKey, json_encode(['data' => $data, '_update_' => $now]), $timeCache);
         }
         return $data;
     }

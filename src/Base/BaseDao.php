@@ -56,8 +56,8 @@ class BaseDao extends \Phalcon\Mvc\Model
 
             return $this->$function($sql, $param);
         }catch (\Exception $e){
-            Log::error("exec sql [$sql] fail, $sid, $param, exp " . $e->getMessage());
-            throw new BaseException(BaseException::INTER_ERROR, $e->getMessage());
+            	Log::error("exec sql [$sql] fail, $sid, ".json_encode($param).", exp " . $e->getMessage().", trace ".$e->getTraceAsString());
+		throw new BaseException(BaseException::INTER_ERROR, $e->getMessage());
         }
     }
 
@@ -131,7 +131,6 @@ class BaseDao extends \Phalcon\Mvc\Model
         }else {
             $sql = str_replace("%ORDERBY", "", $sql);
         }
-
 
         $selectData = [];
         foreach ($data as $key => $item) {
